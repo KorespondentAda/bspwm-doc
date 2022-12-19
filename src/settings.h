@@ -114,6 +114,9 @@ extern bool remove_unplugged_monitors;
 extern bool merge_overlapping_monitors;
 
 void run_config(int run_level);
+/**
+ * Load settings
+ */
 void load_settings(void);
 
 #endif

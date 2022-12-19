@@ -22,6 +22,10 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+/** \file bspwm.c
+ * \brief Main file of BSPWM instance
+ */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/stat.h>
@@ -53,9 +57,11 @@
 #include "query.h"
 #include "bspwm.h"
 
-xcb_connection_t *dpy;
-int default_screen, screen_width, screen_height;
-uint32_t clients_count;
+xcb_connection_t *dpy;  /** Main X connection */
+int default_screen;  /**< Default screen */
+int screen_width;
+int screen_height;
+uint32_t clients_count;  /**< Clients count. Defaults to 0 */
 xcb_screen_t *screen;
 xcb_window_t root;
 char config_path[MAXLEN];
@@ -91,6 +97,11 @@ bool running;
 bool restart;
 bool randr;
 
+/**
+ * Main function of BSPWM instance
+ *
+ * Main function have following workflow:
+ */
 int main(int argc, char *argv[])
 {
 	fd_set descriptors;
@@ -105,6 +116,7 @@ int main(int argc, char *argv[])
 	char *end;
 	int opt;
 
+	/** Processing command-line arguments via getopt() */
 	while ((opt = getopt(argc, argv, "hvc:s:o:")) != -1) {
 		switch (opt) {
 			case 'h':
@@ -132,6 +144,11 @@ int main(int argc, char *argv[])
 		}
 	}
 
+	/** Seting default config_path if need.
+	 * If there is no config path present in config_path - set by default:
+	 * - CONFIG_HOME_ENV/WM_NAME/CONFIG_NAME
+	 * - $HOME/.config/WM_NAME/CONFIG_NAME
+	 */
 	if (config_path[0] == '\0') {
 		char *config_home = getenv(CONFIG_HOME_ENV);
 		if (config_home != NULL) {
@@ -141,12 +158,15 @@ int main(int argc, char *argv[])
 		}
 	}
 
+	/** Connecting to X server on $DISPLAY display to \a default_screen */
 	dpy = xcb_connect(NULL, &default_screen);
 
+	/** If connecting fail, exit() */
 	if (!check_connection(dpy)) {
 		exit(EXIT_FAILURE);
 	}
 
+	/** Loading and setup startup settings */
 	load_settings();
 	setup();
 
@@ -324,6 +344,9 @@ int main(int argc, char *argv[])
 	return exit_status;
 }
 
+/**
+ * Initialization values
+ */
 void init(void)
 {
 	clients_count = 0;
@@ -339,6 +362,9 @@ void init(void)
 	restart = false;
 }
 
+/**
+ * Initial setup
+ */
 void setup(void)
 {
 	init();
@@ -488,6 +514,16 @@ void cleanup(void)
 	empty_history();
 }
 
+/**
+ * Check connection to X server
+ *
+ * Uses xcb_connection_has_error() on \p dpy to determine
+ * error and warn about and return false if presence,
+ * return true otherwise.
+ *
+ * \param dpy Main XCB connection structure
+ * \return false if there is errors, true otherwise
+ */
 bool check_connection (xcb_connection_t *dpy)
 {
 	int xerr;

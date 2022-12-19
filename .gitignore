@@ -3,3 +3,4 @@ bspwm
 bspc
 *.o
 tests/test_window
+Doxygen

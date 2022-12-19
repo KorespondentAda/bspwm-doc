@@ -87,6 +87,8 @@ void run_config(int run_level)
 	}
 }
 
+/** Load settings
+ */
 void load_settings(void)
 {
 	snprintf(external_rules_command, sizeof(external_rules_command), "%s", EXTERNAL_RULES_COMMAND);

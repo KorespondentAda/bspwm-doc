@@ -41,8 +41,15 @@
 #include "window.h"
 #include "parse.h"
 
+/**
+ * Restore BSPWM state
+ *
+ * \param file_path Path to state file
+ * \return Error presence
+ */
 bool restore_state(const char *file_path)
 {
+	/** Read state file \a file_path as JSON */
 	size_t jslen;
 	char *json = read_string(file_path, &jslen);
 

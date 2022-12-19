@@ -27,9 +27,16 @@
 
 #include "types.h"
 
+/** Name for window manager */
 #define WM_NAME                  "bspwm"
+
+/** Name of default config file */
 #define CONFIG_NAME              WM_NAME "rc"
+
+/** Environment variable of user configurations dir */
 #define CONFIG_HOME_ENV          "XDG_CONFIG_HOME"
+
+/** Environment variable of user runtime dir */
 #define RUNTIME_DIR_ENV          "XDG_RUNTIME_DIR"
 
 #define STATE_PATH_TPL           "/tmp/bspwm%s_%i_%i-state"
