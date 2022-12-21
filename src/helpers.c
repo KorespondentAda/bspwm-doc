@@ -22,6 +22,11 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+/**
+ * \file
+ * \brief Number of useful functions
+ */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -33,6 +38,11 @@
 #include <ctype.h>
 #include "bspwm.h"
 
+/**
+ * Warning message
+ *
+ * Prints warning specified by \a fmt to `stderr`.
+ */
 void warn(char *fmt, ...)
 {
 	va_list ap;
@@ -41,6 +51,13 @@ void warn(char *fmt, ...)
 	va_end(ap);
 }
 
+/**
+ * Error occurence
+ *
+ * Prints error message specified by \p fmt to `stderr`
+ * and terminate execution.
+ * \param fmt Format string (printf-like)
+ */
 __attribute__((noreturn))
 void err(char *fmt, ...)
 {
@@ -51,7 +68,18 @@ void err(char *fmt, ...)
 	exit(EXIT_FAILURE);
 }
 
-char *read_string(const char *file_path, size_t *tlen)
+/**
+ * Read file to string
+ *
+ * \param [in] file_path Path to file to read
+ * \param [out] tlen ??? Length of readed data
+ * \return Pointer to readed string, or NULL if error occurs
+ *
+ * \todo Check if it faster to remove `goto`'s
+ */
+char *read_string(
+		const char *file_path, /*< [in] Path to file to read */
+		size_t *tlen /*< [out] ??? Length of readed data */)
 {
 	if (file_path == NULL) {
 		return NULL;
@@ -64,6 +92,7 @@ char *read_string(const char *file_path, size_t *tlen)
 		return NULL;
 	}
 
+	/** Uses BUFSIZ as read buffer size */
 	char buf[BUFSIZ], *content = NULL;
 	size_t len = sizeof(buf);
 
@@ -107,21 +136,39 @@ end:
 	return content;
 }
 
+/**
+ * Get string copy
+ *
+ * \param [in] str String to copy
+ * \param [in] len Length of given string
+ * \return Pointer to copy of specified string, or NULL if error occured
+ */
 char *copy_string(char *str, size_t len)
 {
+	/** \todo Why there used that calloc() form? */
 	char *cpy = calloc(1, ((len+1) * sizeof(char)));
 	if (cpy == NULL) {
 		perror("Copy string: calloc");
 		return NULL;
 	}
 	strncpy(cpy, str, len);
-	cpy[len] = '\0';
+	cpy[len] = '\0'; /** Always end copied string with \0 */
 	return cpy;
 }
 
+/**
+ * Create temporary pipe FIFO
+ *
+ * \param template Filename template to use
+ * \return Path to created temporary pipe FIFO
+ * \warning Segmentation fault if template is NULL
+ * \todo Is it rentable to create, open, close and unlink file to get temporary
+ * name?
+ */
 char *mktempfifo(const char *template)
 {
 	int tempfd;
+	/** Get current runtime dir from env, or '`/tmp`' */
 	char *runtime_dir = getenv(RUNTIME_DIR_ENV);
 	if (runtime_dir == NULL) {
 		runtime_dir = "/tmp";
@@ -132,16 +179,22 @@ char *mktempfifo(const char *template)
 		return NULL;
 	}
 
+	/**
+	 * Set \p fifo_path as `runtime_dir/template`
+	 */
 	sprintf(fifo_path, "%s/%s", runtime_dir, template);
 
+	/** Generate unique filename and open it by mkstemp() */
 	if ((tempfd = mkstemp(fifo_path)) == -1) {
 		free(fifo_path);
 		return NULL;
 	}
 
+	/** Then close() and unlink() it */
 	close(tempfd);
 	unlink(fifo_path);
 
+	/** Create \p fifo_path pipe fifo with 0666 permissions */
 	if (mkfifo(fifo_path, 0666) == -1) {
 		free(fifo_path);
 		return NULL;
@@ -150,6 +203,18 @@ char *mktempfifo(const char *template)
 	return fifo_path;
 }
 
+/**
+ * Print formatted string to buffer string
+ *
+ * \note Realization of GNU extension function
+ *
+ * Allocates enough memory on \p buf, then print to like sprintf()
+ *
+ * \param [out] buf Buffer output buffer
+ * \param [in] fmt Format string (printf-like)
+ * \param [in] ... Format string arguments
+ * \return Size of printed data, -1 if error occurs
+ */
 int asprintf(char **buf, const char *fmt, ...)
 {
 	va_list args;
@@ -159,6 +224,19 @@ int asprintf(char **buf, const char *fmt, ...)
 	return size;
 }
 
+/**
+ * Print formatted string to buffer string
+ *
+ * \note Realization of GNU extension function
+ *
+ * Allocates enough memory on \p buf, then print to like sprintf()
+ *
+ * \param [out] buf Buffer output buffer
+ * \param [in] fmt Format string (printf-like)
+ * \param [in] args List of arguments to \p fmt
+ * \param [in] ... Format string arguments
+ * \return Size of printed data, -1 if error occurs
+ */
 int vasprintf(char **buf, const char *fmt, va_list args)
 {
 	va_list tmp;
@@ -180,6 +258,18 @@ int vasprintf(char **buf, const char *fmt, va_list args)
 	return size;
 }
 
+/**
+ * Check string to be color specifier like "#ABCDEF"
+ *
+ * Conditions:
+ * - String length is 7 by strlen()
+ * - String starts with '#'
+ * - Next 6 chars is hexadecimal digits by isxdigit()
+ *
+ * \param [in] color String to check
+ * \return True if conditions met, false otherwise
+ * \warning Segmentation fault if \p color is NULL
+ */
 bool is_hex_color(const char *color)
 {
 	if (color[0] != '#' || strlen(color) != 7) {
@@ -193,8 +283,22 @@ bool is_hex_color(const char *color)
 	return true;
 }
 
+/**
+ * Tokenize string by separator with escape characters
+ *
+ * First call sets string \p s to process,
+ * then returns next token separated by \p sep.
+ *
+ * \param state New or current tokenization state
+ * \param s String to tokenize, NULL to get next token
+ * \param sep Token separator
+ * \return Next token string, or NULL if string processed or error occurs
+ */
 char *tokenize_with_escape(struct tokenize_state *state, const char *s, char sep)
 {
+	/**
+	 * On first call (\p s is NULL) initializes \p state structure
+	 */
 	if (s != NULL) {
 		// first call
 		state->in_escape = false;
@@ -202,15 +306,18 @@ char *tokenize_with_escape(struct tokenize_state *state, const char *s, char sep
 		state->len = strlen(s) + 1;
 	}
 
+	/** Allocate state.len bytes */
 	char *outp = calloc(state->len, 1);
-	char *ret = outp;
+	char *ret = outp; /** \todo Why copy pointer? */
 	if (!outp) return NULL;
 
+	/** Iterate by state.pos */
 	char cur;
 	while (*state->pos) {
 		--state->len;
 		cur = *state->pos++;
 
+		/** Unescape (\x) characters */
 		if (state->in_escape) {
 			*outp++ = cur;
 			state->in_escape = false;
