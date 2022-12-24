@@ -22,12 +22,28 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+/** \file
+ * Definitions common for bspwm.c and bspc.c, used by communication between.
+ */
+
 #ifndef BSPWM_COMMON_H
 #define BSPWM_COMMON_H
 
+/**
+ * Template for socket file path to generate if not specified
+ * \see bspc.c
+ */
 #define SOCKET_PATH_TPL  "/tmp/bspwm%s_%i_%i-socket"
+/**
+ * Name of environment variable with socket file path
+ * \see bspc.c
+ */
 #define SOCKET_ENV_VAR   "BSPWM_SOCKET"
 
+/**
+ * Start byte defining that message from BSPWM to BSPC is error message
+ * \see bspc.c
+ */
 #define FAILURE_MESSAGE  "\x07"
 
 #endif

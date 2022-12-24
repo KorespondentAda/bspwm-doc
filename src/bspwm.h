@@ -51,6 +51,9 @@
 #define MOTION_RECORDER_I   "motion_recorder"
 #define MOTION_RECORDER_IC  MOTION_RECORDER_I "\0" BSPWM_CLASS_NAME
 
+/**
+ * \todo Describe
+ */
 typedef struct {
 	xcb_window_t id;
 	uint16_t sequence;

@@ -259,7 +259,7 @@ int vasprintf(char **buf, const char *fmt, va_list args)
 }
 
 /**
- * Check string to be color specifier like "#ABCDEF"
+ * Check string to be color specifier like "#RRGGBB"
  *
  * Conditions:
  * - String length is 7 by strlen()
@@ -317,7 +317,7 @@ char *tokenize_with_escape(struct tokenize_state *state, const char *s, char sep
 		--state->len;
 		cur = *state->pos++;
 
-		/** Unescape (\x) characters */
+		/** Unescape (`\x`) characters */
 		if (state->in_escape) {
 			*outp++ = cur;
 			state->in_escape = false;

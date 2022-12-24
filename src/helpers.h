@@ -25,6 +25,12 @@
 #ifndef BSPWM_HELPERS_H
 #define BSPWM_HELPERS_H
 
+/**
+ * \file
+ *
+ * Useful helper functions
+ */
+
 #include <xcb/xcb.h>
 #include <stdarg.h>
 #include <stdio.h>
@@ -65,6 +71,7 @@
 
 #define cleaned_mask(m)   (m & ~(num_lock | scroll_lock | caps_lock))
 #define streq(s1, s2)     (strcmp((s1), (s2)) == 0)
+/** \todo Maybe rewrite as ternary */
 #define unsigned_subtract(a, b)  \
 	do {                         \
 		if (b > a) {             \

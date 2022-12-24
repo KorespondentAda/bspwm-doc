@@ -22,6 +22,10 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+/** \file
+ * Subscribtions logic
+ */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -34,6 +38,15 @@
 #include "subscribe.h"
 #include "tree.h"
 
+/**
+ * Create subscriber list
+ *
+ * \param stream
+ * \param fifo_path
+ * \param field
+ * \param count
+ * \return Created subscriber list with initialized member
+ */
 subscriber_list_t *make_subscriber(FILE *stream, char *fifo_path, int field, int count)
 {
 	subscriber_list_t *sb = calloc(1, sizeof(subscriber_list_t));
@@ -170,6 +183,12 @@ void put_status(subscriber_mask_t mask, ...)
 	}
 }
 
+/**
+ * Remove dead subscribers
+ *
+ * Remove any subscriber for which the stream has been closed and is no longer
+ * writable.
+ */
 void prune_dead_subscribers(void)
 {
 	subscriber_list_t *sb = subscribe_head;

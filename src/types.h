@@ -22,6 +22,13 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+/**
+ * \file
+ *
+ * Define common types
+ * \todo Maybe better rename types to OOP-style?
+ */
+
 #ifndef BSPWM_TYPES_H
 #define BSPWM_TYPES_H
 #include <stdbool.h>
@@ -34,27 +41,45 @@
 #define MISSING_VALUE        "N/A"
 #define MAX_WM_STATES        4
 
+/**
+ * Node split type
+ *
+ * \todo Add information from README
+ */
 typedef enum {
-	TYPE_HORIZONTAL,
-	TYPE_VERTICAL
+	TYPE_HORIZONTAL, /**< Horizontal split (vertical border) */
+	TYPE_VERTICAL    /**< Vertical split (horizontal border) */
 } split_type_t;
 
+/**
+ * Node split mode
+ *
+ * \todo Add information from README
+ */
 typedef enum {
-	MODE_AUTOMATIC,
-	MODE_MANUAL
+	MODE_AUTOMATIC, /**< Automatic [split type](#split_type_t) */
+	MODE_MANUAL     /**< Manual [split type](#split_type_t) */
 } split_mode_t;
 
+/**
+ * Automatic split scheme
+ */
 typedef enum {
-	SCHEME_LONGEST_SIDE,
-	SCHEME_ALTERNATE,
-	SCHEME_SPIRAL
+	SCHEME_LONGEST_SIDE, /**< Choose [split type](#split_type_t) by longest side */
+	SCHEME_ALTERNATE, /**< \todo What is? */
+	SCHEME_SPIRAL /**< Choose [split type](#split_type_t) for spiral layout */
 } automatic_scheme_t;
 
+/**
+ * Node state
+ *
+ * \todo Add information from README
+ */
 typedef enum {
-	STATE_TILED,
-	STATE_PSEUDO_TILED,
-	STATE_FLOATING,
-	STATE_FULLSCREEN
+	STATE_TILED, /**< Tiled node */
+	STATE_PSEUDO_TILED, /**< Pseudo-tiled node */
+	STATE_FLOATING, /**< Floating node */
+	STATE_FULLSCREEN /**< Fullscreen node */
 } client_state_t;
 
 typedef enum {
@@ -338,8 +363,8 @@ struct subscriber_list_t {
 	char* fifo_path;
 	int field;
 	int count;
-	subscriber_list_t *prev;
-	subscriber_list_t *next;
+	subscriber_list_t *prev; /**< Previous list element */
+	subscriber_list_t *next; /**< Next list element */
 };
 
 typedef struct rule_t rule_t;

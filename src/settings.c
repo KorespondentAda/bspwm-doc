@@ -22,6 +22,13 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+/**
+ * \file
+ * Program settings
+ *
+ * Defines settings variables and its initializing functions
+ */
+
 #include <stdio.h>
 #include <unistd.h>
 #include <sys/types.h>
@@ -73,9 +80,14 @@ bool remove_disabled_monitors;
 bool remove_unplugged_monitors;
 bool merge_overlapping_monitors;
 
+/**
+ * Run configuration script with \p run_level
+ */
 void run_config(int run_level)
 {
+	/** Work in another process */
 	if (fork() == 0) {
+		/** Close opened X connection */
 		if (dpy != NULL) {
 			close(xcb_get_file_descriptor(dpy));
 		}
@@ -83,11 +95,15 @@ void run_config(int run_level)
 		char arg1[2];
 		snprintf(arg1, 2, "%i", run_level);
 		execl(config_path, config_path, arg1, (char *) NULL);
+		/** Error in starting script is fatal */
 		err("Couldn't execute the configuration file.\n");
 	}
 }
 
-/** Load settings
+/**
+ * Load settings
+ *
+ * Initialize settings by macro-defined values
  */
 void load_settings(void)
 {

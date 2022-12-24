@@ -22,11 +22,15 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+/** \file
+ */
+
 #ifndef BSPWM_SUBSCRIBE_H
 #define BSPWM_SUBSCRIBE_H
 
 #define FIFO_TEMPLATE  "bspwm_fifo.XXXXXX"
 
+/** Subscribtion event masks */
 typedef enum {
 	SBSC_MASK_REPORT = 1 << 0,
 	SBSC_MASK_MONITOR_ADD = 1 << 1,
@@ -67,9 +71,6 @@ void remove_subscriber(subscriber_list_t *sb);
 void add_subscriber(subscriber_list_t *sb);
 int print_report(FILE *stream);
 void put_status(subscriber_mask_t mask, ...);
-
-/* Remove any subscriber for which the stream has been closed and is no longer
- * writable. */
 void prune_dead_subscribers(void);
 
 #endif

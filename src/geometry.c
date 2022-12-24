@@ -22,30 +22,61 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+/** \file
+ * Geometry calculations
+ */
+
 #include <math.h>
 #include "types.h"
 #include "settings.h"
 #include "geometry.h"
 
+/**
+ * Check if point \p p is inside of rectangle \p r
+ *
+ * \param p Point to check
+ * \param r Rectangle to search within
+ * \return True if \p p inside \p r including up and left boundings
+ */
 bool is_inside(xcb_point_t p, xcb_rectangle_t r)
 {
 	return (p.x >= r.x && p.x < (r.x + r.width) &&
 	        p.y >= r.y && p.y < (r.y + r.height));
 }
 
-/* Returns true if a contains b */
+/**
+ * Check if rectangle \p a fully contains rectangle \p b or they equals
+ *
+ * \param a Outer rectangle
+ * \param b Inner rectangle
+ * \return True if \p a contains \p b
+ */
 bool contains(xcb_rectangle_t a, xcb_rectangle_t b)
 {
 	return (a.x <= b.x && (a.x + a.width) >= (b.x + b.width) &&
 	        a.y <= b.y && (a.y + a.height) >= (b.y + b.height));
 }
 
+/**
+ * Calculate area of rectangle
+ *
+ * \param r Rectangle to calculate area
+ * \return Area of given rectangle
+ */
 unsigned int area(xcb_rectangle_t r)
 {
 	return r.width * r.height;
 }
 
-/* Distance between the `dir` edge of `r1` and the `opposite(dir)` edge of `r2`. */
+/**
+ * Calculate distance between opposite edges of rectangles
+ *
+ * \todo Maybe rewrite with something like ABS macro?
+ * \param r1 First rectangle
+ * \param r2 Second rectangle
+ * \param dir Direction for edge selection
+ * \return Distance between the \p dir edge of \p r1 and the opposite \p dir edge of \p r2.
+ */
 uint32_t boundary_distance(xcb_rectangle_t r1, xcb_rectangle_t r2, direction_t dir)
 {
 	xcb_point_t r1_max = {r1.x + r1.width - 1, r1.y + r1.height - 1};
@@ -68,13 +99,21 @@ uint32_t boundary_distance(xcb_rectangle_t r1, xcb_rectangle_t r2, direction_t d
 	}
 }
 
-/* Is `r2` on the `dir` side of `r1`? */
+/**
+ * Check if second rectangle is on specified direction of first rectangle
+ *
+ * \param r1 First rectangle
+ * \param r2 Second rectangle
+ * \param dir Direction to check
+ * \return True if \p r2 on the \p dir side of \p r1
+ */
 bool on_dir_side(xcb_rectangle_t r1, xcb_rectangle_t r2, direction_t dir)
 {
+	/** Here is the function workflow: */
 	xcb_point_t r1_max = {r1.x + r1.width - 1, r1.y + r1.height - 1};
 	xcb_point_t r2_max = {r2.x + r2.width - 1, r2.y + r2.height - 1};
 
-	/* Eliminate rectangles on the opposite side */
+	/** Eliminate rectangles on the opposite side */
 	switch (directional_focus_tightness) {
 		case TIGHTNESS_LOW:
 			switch (dir) {
@@ -132,7 +171,7 @@ bool on_dir_side(xcb_rectangle_t r1, xcb_rectangle_t r2, direction_t dir)
 			return false;
 	}
 
-	/* Is there a shared vertical/horizontal range? */
+	/** Is there a shared vertical/horizontal range? */
 	switch (dir) {
 		case DIR_NORTH:
 		case DIR_SOUTH:
@@ -153,12 +192,32 @@ bool on_dir_side(xcb_rectangle_t r1, xcb_rectangle_t r2, direction_t dir)
 	}
 }
 
+/**
+ * Check if two rectangles is equals
+ *
+ * \todo Rename arguments to r1 and r2 for consistance
+ *
+ * \param a First rectangle
+ * \param b Second rectangle
+ * \return True if edge coordinates of both rectangles equals
+ */
 bool rect_eq(xcb_rectangle_t a, xcb_rectangle_t b)
 {
 	return (a.x == b.x && a.y == b.y &&
 	        a.width == b.width && a.height == b.height);
 }
 
+/**
+ * Compare rectangles
+ *
+ * First rectangle greater than second if minimal coordinate of first rectangle
+ * not lesser than maximal of second.
+ * If rectangles crossed, their areas compared.
+ *
+ * \param r1 First rectangle
+ * \param r2 Second rectangle
+ * \return Comparsion result
+ */
 int rect_cmp(xcb_rectangle_t r1, xcb_rectangle_t r2)
 {
 	if (r1.y >= (r2.y + r2.height)) {

@@ -23,7 +23,7 @@
  */
 
 /** \file bspwm.c
- * \brief Main file of BSPWM instance
+ * Main file of BSPWM instance
  */
 
 #include <stdio.h>
@@ -77,10 +77,10 @@ rule_t *rule_head;
 rule_t *rule_tail;
 stacking_list_t *stack_head;
 stacking_list_t *stack_tail;
-subscriber_list_t *subscribe_head;
-subscriber_list_t *subscribe_tail;
-pending_rule_t *pending_rule_head;
-pending_rule_t *pending_rule_tail;
+subscriber_list_t *subscribe_head;     /**< Head of subscribers list \see subscribe.c */
+subscriber_list_t *subscribe_tail;     /**< Tail of subscribers list \see subscribe.c */
+pending_rule_t *pending_rule_head;     /*< */
+pending_rule_t *pending_rule_tail;     /*< */
 
 xcb_window_t meta_window;
 motion_recorder_t motion_recorder;

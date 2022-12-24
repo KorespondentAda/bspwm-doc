@@ -22,6 +22,12 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+/** \file
+ * Main file of BSPC instance
+ *
+ * Command `bspc` used to send messages to running BSPWM instance
+ */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -34,23 +40,44 @@
 #include "helpers.h"
 #include "common.h"
 
+/**
+ * Main function of BSPC instance
+ *
+ * Command line arguments:
+ * - `--print-socket-path` — print gotten socket path and exit;
+ * - Other — parts of message to send.
+ *
+ * Here is the function workflow:
+ */
 int main(int argc, char *argv[])
 {
 	int sock_fd;
 	struct sockaddr_un sock_address;
+	/** Using BUFSIZ as size for message and response buffers. */
 	char msg[BUFSIZ], rsp[BUFSIZ];
 
+	/**
+	 * Check for at least one command line argument presence.
+	 */
 	if (argc < 2) {
 		err("No arguments given.\n");
 	}
 
+	/**
+	 * Using UNIX socket for communication with BSPWM.
+	 * Socket path got from SOCKET_ENV_VAR.
+	 */
 	sock_address.sun_family = AF_UNIX;
 	char *sp;
 
 	sp = getenv(SOCKET_ENV_VAR);
 	if (sp != NULL) {
+		/** If present, save it as socket path; */
 		snprintf(sock_address.sun_path, sizeof(sock_address.sun_path), "%s", sp);
 	} else {
+		/** Else, form socket path by [SOCKET_PATH_TPL](#SOCKET_PATH_TPL) with data from
+		 * xcb_parse_display() call, based on DISPLAY envvar.
+		 */
 		char *host = NULL;
 		int dn = 0, sn = 0;
 		if (xcb_parse_display(NULL, &host, &dn, &sn) != 0) {
@@ -59,15 +86,20 @@ int main(int argc, char *argv[])
 		free(host);
 	}
 
+	/**
+	 * Option `--print-socket-path` — print gotten socket path and exit.
+	 */
 	if (streq(argv[1], "--print-socket-path")) {
 		printf("%s\n", sock_address.sun_path);
 		return EXIT_SUCCESS;
 	}
 
+	/** Open socket with gotten path, exit with err() on failure. */
 	if ((sock_fd = socket(AF_UNIX, SOCK_STREAM, 0)) == -1) {
 		err("Failed to create the socket.\n");
 	}
 
+	/** Connect to socket, exit with err() on failure. */
 	if (connect(sock_fd, (struct sockaddr *) &sock_address, sizeof(sock_address)) == -1) {
 		err("Failed to connect to the socket.\n");
 	}
@@ -75,17 +107,26 @@ int main(int argc, char *argv[])
 	argc--, argv++;
 	int msg_len = 0;
 
-	for (int offset = 0, rem = sizeof(msg), n = 0; argc > 0 && rem > 0; offset += n, rem -= n, argc--, argv++) {
+	/** Form message to send by \0-separated command line arguments */
+	for (int offset = 0, rem = sizeof(msg), n = 0;
+			argc > 0 && rem > 0;
+			offset += n, rem -= n, argc--, argv++) {
 		n = snprintf(msg + offset, rem, "%s%c", *argv, 0);
 		msg_len += n;
 	}
 
+	/** Send message to BSPWM, exit with err() on failure. */
 	if (send(sock_fd, msg, msg_len, 0) == -1) {
 		err("Failed to send the data.\n");
 	}
 
 	int ret = EXIT_SUCCESS, nb;
 
+	/**
+	 * Prepare to poll():
+	 * - From socket wait for POLLIN for response from BSPWM to print;
+	 * - From FIFO wait for POLLHUP to exit when stdout disconnected.
+	 */
 	struct pollfd fds[] = {
 		{sock_fd, POLLIN, 0},
 		{STDOUT_FILENO, POLLHUP, 0},
