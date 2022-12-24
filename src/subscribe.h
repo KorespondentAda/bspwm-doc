@@ -28,6 +28,9 @@
 #ifndef BSPWM_SUBSCRIBE_H
 #define BSPWM_SUBSCRIBE_H
 
+/**
+ * Template for temporary FIFO filename \see mktempfifo() \see cmd_subscribe()
+ */
 #define FIFO_TEMPLATE  "bspwm_fifo.XXXXXX"
 
 /** Subscribtion event masks */

@@ -94,16 +94,18 @@ bool sticky_still;
 bool hide_sticky;
 bool record_history;
 bool running;
+/**
+ * \see remove_subscriber()
+ */
 bool restart;
 bool randr;
 
 /**
  * Main function of BSPWM instance
- *
- * Main function have following workflow:
  */
 int main(int argc, char *argv[])
 {
+	/** Here is the function workflow: */
 	fd_set descriptors;
 	char socket_path[MAXLEN];
 	char state_path[MAXLEN] = {0};

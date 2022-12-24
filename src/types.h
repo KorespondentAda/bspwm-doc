@@ -359,12 +359,12 @@ struct event_queue_t {
 
 typedef struct subscriber_list_t subscriber_list_t;
 struct subscriber_list_t {
-	FILE *stream;
+	FILE *stream;             /**< Stream descriptor */
 	char* fifo_path;
 	int field;
 	int count;
-	subscriber_list_t *prev; /**< Previous list element */
-	subscriber_list_t *next; /**< Next list element */
+	subscriber_list_t *prev;  /**< Previous list element */
+	subscriber_list_t *next;  /**< Next list element */
 };
 
 typedef struct rule_t rule_t;

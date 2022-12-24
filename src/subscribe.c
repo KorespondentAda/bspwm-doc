@@ -45,7 +45,7 @@
  * \param fifo_path
  * \param field
  * \param count
- * \return Created subscriber list with initialized member
+ * \return Created and initialized subscriber list
  */
 subscriber_list_t *make_subscriber(FILE *stream, char *fifo_path, int field, int count)
 {
@@ -58,11 +58,20 @@ subscriber_list_t *make_subscriber(FILE *stream, char *fifo_path, int field, int
 	return sb;
 }
 
+/**
+ * Remove element from subscriber list
+ *
+ * \param sb Subscriber to remove
+ */
 void remove_subscriber(subscriber_list_t *sb)
 {
+	/** Here is the function workflow: */
+	/** Just returns if \p sb is NULL */
 	if (sb == NULL) {
 		return;
 	}
+
+	/** Link neighbour elements */
 	subscriber_list_t *a = sb->prev;
 	subscriber_list_t *b = sb->next;
 	if (a != NULL) {
@@ -71,12 +80,19 @@ void remove_subscriber(subscriber_list_t *sb)
 	if (b != NULL) {
 		b->prev = a;
 	}
+
+	/** Move head to next, tail to previous element */
 	if (sb == subscribe_head) {
 		subscribe_head = b;
 	}
 	if (sb == subscribe_tail) {
 		subscribe_tail = a;
 	}
+
+	/**
+	 * If restart is set, remove FD_CLOEXEC flag from stream descriptor.
+	 * Else, just close stream and unlink FIFO.
+	 */
 	if (restart) {
 		int cli_fd = fileno(sb->stream);
 		fcntl(cli_fd, F_SETFD, ~FD_CLOEXEC & fcntl(cli_fd, F_GETFD));
@@ -88,8 +104,17 @@ void remove_subscriber(subscriber_list_t *sb)
 	free(sb);
 }
 
+/**
+ * Add new subscriber list element
+ * \param sb Subscriber to add
+ */
 void add_subscriber(subscriber_list_t *sb)
 {
+	/** Here is the function workflow: */
+	/**
+	 * If list head isn't set, init head and tail with new element;
+	 * Else, append new element at list tail
+	 */
 	if (subscribe_head == NULL) {
 		subscribe_head = subscribe_tail = sb;
 	} else {
@@ -97,8 +122,12 @@ void add_subscriber(subscriber_list_t *sb)
 		sb->prev = subscribe_tail;
 		subscribe_tail = sb;
 	}
+
+	/** Set FD_CLOEXEC to stream descriptor */
 	int cli_fd = fileno(sb->stream);
 	fcntl(cli_fd, F_SETFD, FD_CLOEXEC | fcntl(cli_fd, F_GETFD));
+
+	/** If field has SBSC_MASK_REPORT, print_report() then, if need, remove */
 	if (sb->field & SBSC_MASK_REPORT) {
 		print_report(sb->stream);
 		if (sb->count-- == 1) {
@@ -107,22 +136,39 @@ void add_subscriber(subscriber_list_t *sb)
 	}
 }
 
+/**
+ * Print report to given stream
+ *
+ * \param stream Stream descriptor to print to
+ * \return Stream fflush() error code (0 is no error)
+ */
 int print_report(FILE *stream)
 {
+	/** Here is the function workflow: */
+	/** Print status_prefix */
 	fprintf(stream, "%s", status_prefix);
+	/** For each monitor, print: */
 	for (monitor_t *m = mon_head; m != NULL; m = m->next) {
+		/** M — current monitor, m — other; */
+		/** Monitor name; */
 		fprintf(stream, "%c%s", (mon == m ? 'M' : 'm'), m->name);
+		/** For each desktop, */
 		for (desktop_t *d = m->desk_head; d != NULL; d = d->next) {
+			/** :[ufoUFO] depending on is_urgent() and desktop_t.root, then
+			 * desktop name; */
 			char c = (is_urgent(d) ? 'u' : (d->root == NULL ? 'f' : 'o'));
 			if (m->desk == d) {
 				c = toupper(c);
 			}
 			fprintf(stream, ":%c%s", c, d->name);
 		}
+		/** If monitor_t.desk isn't NULL (has desktop), */
 		if (m->desk != NULL) {
+			/** :L[c] depending on used desktop layout, */
 			fprintf(stream, ":L%c", LAYOUT_CHR(m->desk->layout));
 			if (m->desk->focus != NULL) {
 				node_t *n = m->desk->focus;
+				/** :T[@c] if focused, depending on window state, */
 				if (n->client != NULL) {
 					fprintf(stream, ":T%c", STATE_CHR(n->client->state));
 				} else {
@@ -143,27 +189,46 @@ int print_report(FILE *stream)
 					flags[i++] = 'M';
 				}
 				flags[i] = '\0';
+				/** :G[s] depending on desktop flags; */
 				fprintf(stream, ":G%s", flags);
 			}
 		}
 		if (m != mon_tail) {
+			/** : separator if not last monitor. */
 			fprintf(stream, "%s", ":");
 		}
 	}
+	/** End with newline '\n' then fflush() */
 	fprintf(stream, "%s", "\n");
 	return fflush(stream);
 }
 
+/**
+ * Print status message from subscribers of events
+ *
+ * \param mask Events subscribed for
+ * \param ... Message to print for subscribers
+ */
 void put_status(subscriber_mask_t mask, ...)
 {
+	/** Here is the function workflow: */
 	subscriber_list_t *sb = subscribe_head;
 	int ret;
+	/**
+	 * For each subscriber in list,
+	 * if given \p mask presence in subscriber:
+	 */
 	while (sb != NULL) {
 		subscriber_list_t *next = sb->next;
 		if (sb->field & mask) {
+			/** Decrease subscriber_list_t.count; */
 			if (sb->count > 0) {
 				sb->count--;
 			}
+			/**
+			 * Print report if SBSC_MASK_REPORT set,
+			 * else print formatted by \p ... message;
+			 */
 			if (mask == SBSC_MASK_REPORT) {
 				ret = print_report(sb->stream);
 			} else {
@@ -175,6 +240,7 @@ void put_status(subscriber_mask_t mask, ...)
 				va_end(args);
 				ret = fflush(sb->stream);
 			}
+			/** remove_subscriber() if count is zero or something printed. */
 			if (ret != 0 || sb->count == 0) {
 				remove_subscriber(sb);
 			}

@@ -56,7 +56,9 @@ void warn(char *fmt, ...)
  *
  * Prints error message specified by \p fmt to `stderr`
  * and terminate execution.
+ *
  * \param fmt Format string (printf-like)
+ * \param ... Format args
  */
 __attribute__((noreturn))
 void err(char *fmt, ...)
@@ -72,14 +74,12 @@ void err(char *fmt, ...)
  * Read file to string
  *
  * \param [in] file_path Path to file to read
- * \param [out] tlen ??? Length of readed data
+ * \param [out] tlen Length of readed data
  * \return Pointer to readed string, or NULL if error occurs
  *
  * \todo Check if it faster to remove `goto`'s
  */
-char *read_string(
-		const char *file_path, /*< [in] Path to file to read */
-		size_t *tlen /*< [out] ??? Length of readed data */)
+char *read_string(const char *file_path, size_t *tlen)
 {
 	if (file_path == NULL) {
 		return NULL;
@@ -139,9 +139,9 @@ end:
 /**
  * Get string copy
  *
- * \param [in] str String to copy
- * \param [in] len Length of given string
- * \return Pointer to copy of specified string, or NULL if error occured
+ * \param str String to copy
+ * \param len Length of given string
+ * \return Pointer to copy of given string; NULL if error occured
  */
 char *copy_string(char *str, size_t len)
 {
@@ -161,6 +161,7 @@ char *copy_string(char *str, size_t len)
  *
  * \param template Filename template to use
  * \return Path to created temporary pipe FIFO
+ * \sa FIFO_TEMPLATE, cmd_subscribe()
  * \warning Segmentation fault if template is NULL
  * \todo Is it rentable to create, open, close and unlink file to get temporary
  * name?
@@ -234,7 +235,6 @@ int asprintf(char **buf, const char *fmt, ...)
  * \param [out] buf Buffer output buffer
  * \param [in] fmt Format string (printf-like)
  * \param [in] args List of arguments to \p fmt
- * \param [in] ... Format string arguments
  * \return Size of printed data, -1 if error occurs
  */
 int vasprintf(char **buf, const char *fmt, va_list args)
