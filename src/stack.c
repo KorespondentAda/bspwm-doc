@@ -22,6 +22,10 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+/** \file
+ * \todo Describe functions
+ */
+
 #include <stdlib.h>
 #include "bspwm.h"
 #include "window.h"
@@ -30,6 +34,15 @@
 #include "tree.h"
 #include "stack.h"
 
+/** [Stack](#stacking_list_t) constructor.
+ *
+ * Create stack item from specified [node](#node_t).
+ * Returned item can be inserted by
+ * stack_insert_after() or stack_insert_before().
+ *
+ * \param n Node to construct stack item from
+ * \return Constructed stack
+ */
 stacking_list_t *make_stack(node_t *n)
 {
 	stacking_list_t *s = calloc(1, sizeof(stacking_list_t));
@@ -38,6 +51,15 @@ stacking_list_t *make_stack(node_t *n)
 	return s;
 }
 
+/** Insert node in stack after specified item
+ *
+ * Create stack item from node \p n and insert it right after \p a.
+ * If \p a is NULL, #stack_head and #stack_tail sets to new stack item.
+ *
+ * \param a Stack item to insert before
+ * \param n Node to insert
+ * \warn If \p a is NULL when stack already exists, it will be missed.
+ */
 void stack_insert_after(stacking_list_t *a, node_t *n)
 {
 	stacking_list_t *s = make_stack(n);
@@ -62,6 +84,15 @@ void stack_insert_after(stacking_list_t *a, node_t *n)
 	}
 }
 
+/** Insert node in stack before specified item
+ *
+ * Create stack item from node \p n and insert it in front of \p a.
+ * If \p a is NULL, #stack_head and #stack_tail sets to new stack item.
+ *
+ * \param a Stack item to insert before
+ * \param n Node to insert
+ * \warn If \p a is NULL when stack already exists, it will be missed.
+ */
 void stack_insert_before(stacking_list_t *a, node_t *n)
 {
 	stacking_list_t *s = make_stack(n);
@@ -86,6 +117,12 @@ void stack_insert_before(stacking_list_t *a, node_t *n)
 	}
 }
 
+/** [Stack](#stacking_list_t) destructor.
+ *
+ * Remove specified item from stack, saving stack structure and freeing memory.
+ *
+ * \param s Stack item
+ */
 void remove_stack(stacking_list_t *s)
 {
 	if (s == NULL) {
@@ -108,8 +145,16 @@ void remove_stack(stacking_list_t *s)
 	free(s);
 }
 
+/** Remove all items with node
+ *
+ * Removes all items from [stack](#stacking_list_t) that contains specified node
+ * or its child.
+ *
+ * \param n Node to remove from stack
+ */
 void remove_stack_node(node_t *n)
 {
+	/** \todo What is \ref first_extrema() and \ref next_leaf() */
 	for (node_t *f = first_extrema(n); f != NULL; f = next_leaf(f, n)) {
 		for (stacking_list_t *s = stack_head; s != NULL; s = s->next) {
 			if (s->node == f) {
@@ -120,6 +165,17 @@ void remove_stack_node(node_t *n)
 	}
 }
 
+/** Client stack depth level
+ *
+ * Level is $3\cdot a + b$, where:
+ * - $a$ is layer level {LAYER_BELOW, LAYER_NORMAL, LAYER_??}
+ * - $b$ is state level {IS_TILED(c), IS_FLOATING(c), IS_??}
+ *
+ * \todo Insert layer and state value macros
+ *
+ * \param c Client node
+ * \return Stack level of given client
+ */
 int stack_level(client_t *c)
 {
 	int layer_level = (c->layer == LAYER_NORMAL ? 1 : (c->layer == LAYER_BELOW ? 0 : 2));
@@ -127,11 +183,25 @@ int stack_level(client_t *c)
 	return 3 * layer_level + state_level;
 }
 
+/** Stack comparsion
+ *
+ * Compare by stack_level()
+ * \param c1 First client
+ * \param c2 Second client
+ * \return Difference between compared values
+ */
 int stack_cmp(client_t *c1, client_t *c2)
 {
 	return stack_level(c1) - stack_level(c2);
 }
 
+/** Get last stack item above specified node
+ *
+ * See stack from head to get last item that above given node or on equal level.
+ *
+ * \param n Node to filter
+ * \return Last stack item that is above than \p n node
+ */
 stacking_list_t *limit_above(node_t *n)
 {
 	stacking_list_t *s = stack_head;
@@ -147,6 +217,13 @@ stacking_list_t *limit_above(node_t *n)
 	return s;
 }
 
+/** Get last stack item below specified node
+ *
+ * See stack from tail to get last item that below given node or on equal level.
+ *
+ * \param n Node to filter
+ * \return Last stack item that is above than \p n node
+ */
 stacking_list_t *limit_below(node_t *n)
 {
 	stacking_list_t *s = stack_tail;
@@ -162,9 +239,14 @@ stacking_list_t *limit_below(node_t *n)
 	return s;
 }
 
+/** \todo Describe
+ */
 void stack(desktop_t *d, node_t *n, bool focused)
 {
+	/** Here is the function workflow: */
+	/** For every leaf of \p n (next_leaf()): */
 	for (node_t *f = first_extrema(n); f != NULL; f = next_leaf(f, n)) {
+		/** Skip NULL clients, and floating clients if #auto_raise isn't set; */
 		if (f->client == NULL || (IS_FLOATING(f->client) && !auto_raise)) {
 			continue;
 		}
@@ -193,6 +275,8 @@ void stack(desktop_t *d, node_t *n, bool focused)
 	restack_presel_feedbacks(d);
 }
 
+/** \todo Describe
+ */
 void restack_presel_feedbacks(desktop_t *d)
 {
 	stacking_list_t *s = stack_tail;
@@ -204,6 +288,8 @@ void restack_presel_feedbacks(desktop_t *d)
 	}
 }
 
+/** \todo Describe
+ */
 void restack_presel_feedbacks_in(node_t *r, node_t *n)
 {
 	if (r == NULL) {

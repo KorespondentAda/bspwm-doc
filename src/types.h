@@ -343,11 +343,12 @@ struct history_t {
 	history_t *next;
 };
 
+/** List of stacking nodes */
 typedef struct stacking_list_t stacking_list_t;
 struct stacking_list_t {
-	node_t *node;
-	stacking_list_t *prev;
-	stacking_list_t *next;
+	node_t *node;             /**< Current element's node */
+	stacking_list_t *prev;    /**< Previous element */
+	stacking_list_t *next;    /**< Next element */
 };
 
 typedef struct event_queue_t event_queue_t;
@@ -357,12 +358,13 @@ struct event_queue_t {
 	event_queue_t *next;
 };
 
+/** List of subscribers */
 typedef struct subscriber_list_t subscriber_list_t;
 struct subscriber_list_t {
 	FILE *stream;             /**< Stream descriptor */
-	char* fifo_path;
-	int field;
-	int count;
+	char* fifo_path;          /**< \todo Describe */
+	int field;                /**< \todo Describe */
+	int count;                /**< \todo Describe */
 	subscriber_list_t *prev;  /**< Previous list element */
 	subscriber_list_t *next;  /**< Next list element */
 };
@@ -402,9 +404,11 @@ typedef struct {
 	xcb_rectangle_t *rect;
 } rule_consequence_t;
 
+/** \todo Purpose?
+ */
 typedef struct pending_rule_t pending_rule_t;
 struct pending_rule_t {
-	int fd;
+	int fd;                       /**< File descriptor to read from */
 	xcb_window_t win;
 	rule_consequence_t *csq;
 	event_queue_t *event_head;

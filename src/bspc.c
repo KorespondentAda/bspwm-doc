@@ -40,25 +40,21 @@
 #include "helpers.h"
 #include "common.h"
 
-/**
- * Main function of BSPC instance
+/** Main function of BSPC instance
  *
  * Command line arguments:
  * - `--print-socket-path` — print gotten socket path and exit;
  * - Other — parts of message to send.
- *
- * Here is the function workflow:
  */
 int main(int argc, char *argv[])
 {
+	/** Here is the function workflow: */
 	int sock_fd;
 	struct sockaddr_un sock_address;
 	/** Using BUFSIZ as size for message and response buffers. */
 	char msg[BUFSIZ], rsp[BUFSIZ];
 
-	/**
-	 * Check for at least one command line argument presence.
-	 */
+	/** Check for at least one command line argument presence. */
 	if (argc < 2) {
 		err("No arguments given.\n");
 	}
@@ -75,8 +71,9 @@ int main(int argc, char *argv[])
 		/** If present, save it as socket path; */
 		snprintf(sock_address.sun_path, sizeof(sock_address.sun_path), "%s", sp);
 	} else {
-		/** Else, form socket path by [SOCKET_PATH_TPL](#SOCKET_PATH_TPL) with data from
-		 * xcb_parse_display() call, based on DISPLAY envvar.
+		/**
+		 * Else, form socket path by [SOCKET_PATH_TPL](#SOCKET_PATH_TPL)
+		 * with data from xcb_parse_display() call, based on DISPLAY envvar.
 		 */
 		char *host = NULL;
 		int dn = 0, sn = 0;
@@ -86,9 +83,7 @@ int main(int argc, char *argv[])
 		free(host);
 	}
 
-	/**
-	 * Option `--print-socket-path` — print gotten socket path and exit.
-	 */
+	/** Option `--print-socket-path` — print gotten socket path and exit. */
 	if (streq(argv[1], "--print-socket-path")) {
 		printf("%s\n", sock_address.sun_path);
 		return EXIT_SUCCESS;

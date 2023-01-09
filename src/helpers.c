@@ -292,23 +292,20 @@ bool is_hex_color(const char *color)
  * \param state New or current tokenization state
  * \param s String to tokenize, NULL to get next token
  * \param sep Token separator
- * \return Next token string, or NULL if string processed or error occurs
+ * \return Next token string; NULL if string processed or error occurs
  */
 char *tokenize_with_escape(struct tokenize_state *state, const char *s, char sep)
 {
-	/**
-	 * On first call (\p s is NULL) initializes \p state structure
-	 */
+	/** Here is the function workflow: */
+	/** On first call (\p s is not NULL) initializes \p state structure */
 	if (s != NULL) {
-		// first call
 		state->in_escape = false;
 		state->pos = s;
 		state->len = strlen(s) + 1;
 	}
 
-	/** Allocate state.len bytes */
-	char *outp = calloc(state->len, 1);
-	char *ret = outp; /** \todo Why copy pointer? */
+	char *outp = calloc(state->len, 1); /** Allocate state.len bytes */
+	char *ret = outp; /** Save start of buffer to return it */
 	if (!outp) return NULL;
 
 	/** Iterate by state.pos */

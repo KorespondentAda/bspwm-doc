@@ -38,6 +38,7 @@
 #include <stdint.h>
 #include <float.h>
 
+/** Length of non-byte array */
 #define LENGTH(x)         (sizeof(x) / sizeof(*x))
 #define MAX(A, B)         ((A) > (B) ? (A) : (B))
 #define MIN(A, B)         ((A) < (B) ? (A) : (B))
@@ -91,10 +92,13 @@ int asprintf(char **buf, const char *fmt, ...);
 int vasprintf(char **buf, const char *fmt, va_list args);
 bool is_hex_color(const char *color);
 
+/**
+ * State for continuous tokenization
+ */
 struct tokenize_state {
-	bool in_escape;
-	const char *pos;
-	size_t len;
+	bool in_escape;    /**< Is currently processed symbol must be escaped */
+	const char *pos;   /**< Pointer to remaining string */
+	size_t len;        /**< Length of remaining string */
 };
 char *tokenize_with_escape(struct tokenize_state *state, const char *s, char sep);
 

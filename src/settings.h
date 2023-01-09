@@ -24,6 +24,7 @@
 
 /**
  * \file
+ * \todo Describe default values macros
  */
 
 #ifndef BSPWM_SETTINGS_H

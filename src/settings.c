@@ -27,6 +27,7 @@
  * Program settings
  *
  * Defines settings variables and its initializing functions
+ * \todo Describe variables
  */
 
 #include <stdio.h>
@@ -85,7 +86,8 @@ bool merge_overlapping_monitors;
  */
 void run_config(int run_level)
 {
-	/** Work in another process */
+	/** Here is the function workflow: */
+	/** Fork then execute self */
 	if (fork() == 0) {
 		/** Close opened X connection */
 		if (dpy != NULL) {
