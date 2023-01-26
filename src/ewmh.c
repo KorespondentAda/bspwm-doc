@@ -22,6 +22,10 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+/** \file ewmh.c
+ * EWMH communication logic
+ */
+
 #include <stdlib.h>
 #include <sys/types.h>
 #include <string.h>
@@ -31,11 +35,14 @@
 #include "tree.h"
 #include "ewmh.h"
 
-xcb_ewmh_connection_t *ewmh;
+xcb_ewmh_connection_t *ewmh;    /**< EWMH information for used screen */
 
+/** Initialize EWMH handler and atoms */
 void ewmh_init(void)
 {
+	/** Allocate memory for #ewmh connection structure */
 	ewmh = calloc(1, sizeof(xcb_ewmh_connection_t));
+	/** If xcb_ewmh_init_atoms_replies() fails, exit with error \todo Error messages documenting? */
 	if (xcb_ewmh_init_atoms_replies(ewmh, xcb_ewmh_init_atoms(dpy, ewmh), NULL) == 0) {
 		err("Can't initialize EWMH atoms.\n");
 	}
@@ -289,6 +296,8 @@ void ewmh_wm_state_update(node_t *n)
 	xcb_ewmh_set_wm_state(ewmh, n->id, count, values);
 }
 
+/** \todo Describe
+ */
 void ewmh_set_supporting(xcb_window_t win)
 {
 	pid_t wm_pid = getpid();
