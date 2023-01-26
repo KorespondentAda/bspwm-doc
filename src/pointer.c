@@ -22,6 +22,10 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+/** \file pointer.c
+ * \todo Describe. What for?
+ */
+
 #include <xcb/xcb_keysyms.h>
 #include <stdlib.h>
 #include <stdbool.h>
@@ -36,18 +40,23 @@
 #include "window.h"
 #include "pointer.h"
 
-uint16_t num_lock;
-uint16_t caps_lock;
-uint16_t scroll_lock;
+/** \todo Maybe use `typedef modfield_t uint16_t`? */
+uint16_t num_lock;       /**< \todo Describe */
+uint16_t caps_lock;      /**< \todo Describe */
+uint16_t scroll_lock;    /**< \todo Describe */
 
-bool grabbing;
-node_t *grabbed_node;
+bool grabbing;           /**< \todo Describe */
+node_t *grabbed_node;    /**< \todo Describe */
 
+/** Initialize pointer
+ */
 void pointer_init(void)
 {
+	/** Get modfields */
 	num_lock = modfield_from_keysym(XK_Num_Lock);
 	caps_lock = modfield_from_keysym(XK_Caps_Lock);
 	scroll_lock = modfield_from_keysym(XK_Scroll_Lock);
+	/** If Caps Lock does not found, replace it modfield with #XCB_MOD_MASK_LOCK */
 	if (caps_lock == XCB_NO_SYMBOL) {
 		caps_lock = XCB_MOD_MASK_LOCK;
 	}
@@ -67,6 +76,7 @@ void window_grab_buttons(xcb_window_t win)
 	}
 }
 
+/** \todo Looks like something wrong with this code */
 void window_grab_button(xcb_window_t win, uint8_t button, uint16_t modifier)
 {
 #define GRAB(b, m) \
@@ -122,6 +132,14 @@ void ungrab_buttons(void)
 	}
 }
 
+/** Find keycode for keysym??
+ *
+ * Gets all keycodes for \p keysym and compares it with list of modifier keys
+ * keycodes to find modifier of \p keysym.
+ *
+ * \param keysym Keysym of potential modifier
+ * \return Modfield — bitfield int that setted to modifier associated to \p keysym
+ */
 int16_t modfield_from_keysym(xcb_keysym_t keysym)
 {
 	uint16_t modfield = 0;
@@ -133,18 +151,25 @@ int16_t modfield_from_keysym(xcb_keysym_t keysym)
 	    (reply = xcb_get_modifier_mapping_reply(dpy, xcb_get_modifier_mapping(dpy), NULL)) == NULL ||
 	    reply->keycodes_per_modifier < 1 ||
 	    (mod_keycodes = xcb_get_modifier_mapping_keycodes(reply)) == NULL) {
-		goto end;
+		goto end; /**< \todo Is `goto` necessary here? */
 	}
 
 	unsigned int num_mod = xcb_get_modifier_mapping_keycodes_length(reply) / reply->keycodes_per_modifier;
+	/** For every modifier key, */
 	for (unsigned int i = 0; i < num_mod; i++) {
+		/** and every modifier keycode: */
 		for (unsigned int j = 0; j < reply->keycodes_per_modifier; j++) {
+			/** Get modifier keycode, */
 			xcb_keycode_t mk = mod_keycodes[i * reply->keycodes_per_modifier + j];
+			/** if it is junk — drop it; else */
 			if (mk == XCB_NO_SYMBOL) {
 				continue;
 			}
+			/** for every keycode gotten from xcb_key_symbols_get_keycode() */
 			for (xcb_keycode_t *k = keycodes; *k != XCB_NO_SYMBOL; k++) {
+				/** check if it is gotten modifier keycode */
 				if (*k == mk) {
+					/** And set returned modfield flag */
 					modfield |= (1 << i);
 				}
 			}
@@ -152,6 +177,7 @@ int16_t modfield_from_keysym(xcb_keysym_t keysym)
 	}
 
 end:
+	/** Free memory for local vars */
 	xcb_key_symbols_free(symbols);
 	free(keycodes);
 	free(reply);
