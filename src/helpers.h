@@ -26,9 +26,9 @@
 #define BSPWM_HELPERS_H
 
 /**
- * \file
- *
- * Useful helper functions
+ * \file helpers.h
+ * Useful helper functions and macros
+ * \todo Add doxygen groups for macros
  */
 
 #include <xcb/xcb.h>
@@ -40,7 +40,9 @@
 
 /** Length of non-byte array */
 #define LENGTH(x)         (sizeof(x) / sizeof(*x))
+/** Maximum of two values */
 #define MAX(A, B)         ((A) > (B) ? (A) : (B))
+/** Minimum of two values */
 #define MIN(A, B)         ((A) < (B) ? (A) : (B))
 
 #define IS_TILED(c)       (c->state == STATE_TILED || c->state == STATE_PSEUDO_TILED)
@@ -48,31 +50,59 @@
 #define IS_FULLSCREEN(c)  (c->state == STATE_FULLSCREEN)
 #define IS_RECEPTACLE(n)  (is_leaf(n) && n->client == NULL)
 
+/* Convertions to string */
+/** Convert condition to "true" or "false" string */
 #define BOOL_STR(A)       ((A) ? "true" : "false")
+/** Convert condition to "on" or "off" string */
 #define ON_OFF_STR(A)     ((A) ? "on" : "off")
+/** Convert [layout_t](layout type) member to "tiled" or "monocle" string */
 #define LAYOUT_STR(A)     ((A) == LAYOUT_TILED ? "tiled" : "monocle")
+/** Convert [layout_t](layout type) to 'T' or 'M' char */
 #define LAYOUT_CHR(A)     ((A) == LAYOUT_TILED ? 'T' : 'M')
+/** Convert [child_polarity_t](child polarity) to string
+ */
 #define CHILD_POL_STR(A)  ((A) == FIRST_CHILD ? "first_child" : "second_child")
+/** Convert [automatic_scheme_t](split autoscheme) to string */
 #define AUTO_SCM_STR(A)   ((A) == SCHEME_LONGEST_SIDE ? "longest_side" : ((A) == SCHEME_ALTERNATE ? "alternate" : "spiral"))
+/** Convert #tightness_t to string */
 #define TIGHTNESS_STR(A)  ((A) == TIGHTNESS_HIGH ? "high" : "low")
+/** Convert [split_type_t](Split type) to string */
 #define SPLIT_TYPE_STR(A) ((A) == TYPE_HORIZONTAL ? "horizontal" : "vertical")
+/** Convert [split_mode_t](Split mode) to string */
 #define SPLIT_MODE_STR(A) ((A) == MODE_AUTOMATIC ? "automatic" : "manual")
+/** Convert [direction_t](direction specifier) to string */
 #define SPLIT_DIR_STR(A)  ((A) == DIR_NORTH ? "north" : ((A) == DIR_WEST ? "west" : ((A) == DIR_SOUTH ? "south" : "east")))
+/** Convert [client_state_t](node state) to string */
 #define STATE_STR(A)      ((A) == STATE_TILED ? "tiled" : ((A) == STATE_FLOATING ? "floating" : ((A) == STATE_FULLSCREEN ? "fullscreen" : "pseudo_tiled")))
+/** Convert [client_state_t](node state) to char */
 #define STATE_CHR(A)      ((A) == STATE_TILED ? 'T' : ((A) == STATE_FLOATING ? 'F' : ((A) == STATE_FULLSCREEN ? '=' : 'P')))
+/** Convert #stack_layer_t to string */
 #define LAYER_STR(A)      ((A) == LAYER_BELOW ? "below" : ((A) == LAYER_NORMAL ? "normal" : "above"))
 
+/** Imploding of XCB_CONFIG_WINDOW_X and XCB_CONFIG_WINDOW_Y macros */
 #define XCB_CONFIG_WINDOW_X_Y               (XCB_CONFIG_WINDOW_X | XCB_CONFIG_WINDOW_Y)
+/** Imploding of XCB_CONFIG_WINDOW_WIDTH and XCB_CONFIG_WINDOW_HEIGHT macros */
 #define XCB_CONFIG_WINDOW_WIDTH_HEIGHT      (XCB_CONFIG_WINDOW_WIDTH | XCB_CONFIG_WINDOW_HEIGHT)
+/** Imploding of XCB_CONFIG_WINDOW_X_Y and XCB_CONFIG_WINDOW_WIDTH_HEIGHT macros */
 #define XCB_CONFIG_WINDOW_X_Y_WIDTH_HEIGHT  (XCB_CONFIG_WINDOW_X | XCB_CONFIG_WINDOW_Y | XCB_CONFIG_WINDOW_WIDTH | XCB_CONFIG_WINDOW_HEIGHT)
 
+/** Maximum string length
+ * Used only for const string definition and haven't checked
+ */
 #define MAXLEN    256
+/** Size for small-length string arrays */
 #define SMALEN     32
+/** Initial capacity of message arguments array \todo Move to messages.c? */
 #define INIT_CAP    8
 
+/** Clean modfield from #num_lock, #scroll_lock and #caps_lock mod bits */
 #define cleaned_mask(m)   (m & ~(num_lock | scroll_lock | caps_lock))
+/** Strings comparsion for equality */
 #define streq(s1, s2)     (strcmp((s1), (s2)) == 0)
-/** \todo Maybe rewrite as ternary */
+/** Substraction without overloading
+ * \todo Maybe rewrite as ternary:
+ * `(a -= MIN(a, b))`
+ */
 #define unsigned_subtract(a, b)  \
 	do {                         \
 		if (b > a) {             \
