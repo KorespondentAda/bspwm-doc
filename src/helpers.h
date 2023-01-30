@@ -25,8 +25,7 @@
 #ifndef BSPWM_HELPERS_H
 #define BSPWM_HELPERS_H
 
-/**
- * \file helpers.h
+/** \file helpers.h
  * Useful helper functions and macros
  * \todo Add doxygen groups for macros
  */
@@ -45,9 +44,15 @@
 /** Minimum of two values */
 #define MIN(A, B)         ((A) < (B) ? (A) : (B))
 
+/** Is node state is [tiled](#STATE_TILED)
+ * or [pseudo tiled](#STATE_PSEUDO_TILED)
+ */
 #define IS_TILED(c)       (c->state == STATE_TILED || c->state == STATE_PSEUDO_TILED)
+/** Is node state is [floating](#STATE_FLOATING) */
 #define IS_FLOATING(c)    (c->state == STATE_FLOATING)
+/** Is node state is [fullscreen](#STATE_FULLSCREEN) */
 #define IS_FULLSCREEN(c)  (c->state == STATE_FULLSCREEN)
+/** Is node state is [tiled](#STATE_TILED) */
 #define IS_RECEPTACLE(n)  (is_leaf(n) && n->client == NULL)
 
 /* Convertions to string */
@@ -55,26 +60,25 @@
 #define BOOL_STR(A)       ((A) ? "true" : "false")
 /** Convert condition to "on" or "off" string */
 #define ON_OFF_STR(A)     ((A) ? "on" : "off")
-/** Convert [layout_t](layout type) member to "tiled" or "monocle" string */
+/** Convert [layout type](#layout_t) member to "tiled" or "monocle" string */
 #define LAYOUT_STR(A)     ((A) == LAYOUT_TILED ? "tiled" : "monocle")
-/** Convert [layout_t](layout type) to 'T' or 'M' char */
+/** Convert [layout type](#layout_t) to 'T' or 'M' char */
 #define LAYOUT_CHR(A)     ((A) == LAYOUT_TILED ? 'T' : 'M')
-/** Convert [child_polarity_t](child polarity) to string
- */
+/** Convert [child polarity](#child_polarity_t) to string */
 #define CHILD_POL_STR(A)  ((A) == FIRST_CHILD ? "first_child" : "second_child")
-/** Convert [automatic_scheme_t](split autoscheme) to string */
+/** Convert [split autoscheme](#automatic_scheme_t) to string */
 #define AUTO_SCM_STR(A)   ((A) == SCHEME_LONGEST_SIDE ? "longest_side" : ((A) == SCHEME_ALTERNATE ? "alternate" : "spiral"))
 /** Convert #tightness_t to string */
 #define TIGHTNESS_STR(A)  ((A) == TIGHTNESS_HIGH ? "high" : "low")
-/** Convert [split_type_t](Split type) to string */
+/** Convert [Split type](#split_type_t) to string */
 #define SPLIT_TYPE_STR(A) ((A) == TYPE_HORIZONTAL ? "horizontal" : "vertical")
-/** Convert [split_mode_t](Split mode) to string */
+/** Convert [Split mode](#split_mode_t) to string */
 #define SPLIT_MODE_STR(A) ((A) == MODE_AUTOMATIC ? "automatic" : "manual")
-/** Convert [direction_t](direction specifier) to string */
+/** Convert [direction specifier](#direction_t) to string */
 #define SPLIT_DIR_STR(A)  ((A) == DIR_NORTH ? "north" : ((A) == DIR_WEST ? "west" : ((A) == DIR_SOUTH ? "south" : "east")))
-/** Convert [client_state_t](node state) to string */
+/** Convert [node state](#client_state_t) to string */
 #define STATE_STR(A)      ((A) == STATE_TILED ? "tiled" : ((A) == STATE_FLOATING ? "floating" : ((A) == STATE_FULLSCREEN ? "fullscreen" : "pseudo_tiled")))
-/** Convert [client_state_t](node state) to char */
+/** Convert [node state](#client_state_t) to char */
 #define STATE_CHR(A)      ((A) == STATE_TILED ? 'T' : ((A) == STATE_FLOATING ? 'F' : ((A) == STATE_FULLSCREEN ? '=' : 'P')))
 /** Convert #stack_layer_t to string */
 #define LAYER_STR(A)      ((A) == LAYER_BELOW ? "below" : ((A) == LAYER_NORMAL ? "normal" : "above"))

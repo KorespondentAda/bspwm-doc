@@ -22,9 +22,8 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/**
- * \file
- * \brief Number of useful functions
+/** \file helpers.c
+ * Number of useful functions
  */
 
 #include <stdio.h>
@@ -38,10 +37,12 @@
 #include <ctype.h>
 #include "bspwm.h"
 
-/**
- * Warning message
+/** Warning message
  *
- * Prints warning specified by \a fmt to `stderr`.
+ * \param fmt Format string (printf-like)
+ * \param ... Format args
+ *
+ * Prints warning specified by \p fmt to `stderr`.
  */
 void warn(char *fmt, ...)
 {
@@ -51,16 +52,15 @@ void warn(char *fmt, ...)
 	va_end(ap);
 }
 
-/**
- * Error occurence
- *
- * Prints error message specified by \p fmt to `stderr`
- * and terminate execution.
+__attribute__((noreturn))
+/** Error occurence
  *
  * \param fmt Format string (printf-like)
  * \param ... Format args
+ *
+ * Prints error message specified by \p fmt to `stderr`
+ * and terminate execution.
  */
-__attribute__((noreturn))
 void err(char *fmt, ...)
 {
 	va_list ap;
@@ -70,8 +70,7 @@ void err(char *fmt, ...)
 	exit(EXIT_FAILURE);
 }
 
-/**
- * Read file to string
+/** Read file to string
  *
  * \param [in] file_path Path to file to read
  * \param [out] tlen Length of readed data
@@ -136,8 +135,7 @@ end:
 	return content;
 }
 
-/**
- * Get string copy
+/** Get string copy
  *
  * \param str String to copy
  * \param len Length of given string
@@ -156,11 +154,11 @@ char *copy_string(char *str, size_t len)
 	return cpy;
 }
 
-/**
- * Create temporary pipe FIFO
+/** Create temporary pipe FIFO
  *
  * \param template Filename template to use
  * \return Path to created temporary pipe FIFO
+ *
  * \sa FIFO_TEMPLATE, cmd_subscribe()
  * \warning Segmentation fault if template is NULL
  * \todo Is it rentable to create, open, close and unlink file to get temporary
@@ -204,17 +202,16 @@ char *mktempfifo(const char *template)
 	return fifo_path;
 }
 
-/**
- * Print formatted string to buffer string
- *
- * \note Realization of GNU extension function
- *
- * Allocates enough memory on \p buf, then print to like sprintf()
+/** Print formatted string to buffer string
  *
  * \param [out] buf Buffer output buffer
  * \param [in] fmt Format string (printf-like)
  * \param [in] ... Format string arguments
  * \return Size of printed data, -1 if error occurs
+ *
+ * \note Realization of GNU extension function
+ *
+ * Allocates enough memory on \p buf, then print to like sprintf()
  */
 int asprintf(char **buf, const char *fmt, ...)
 {
@@ -225,17 +222,16 @@ int asprintf(char **buf, const char *fmt, ...)
 	return size;
 }
 
-/**
- * Print formatted string to buffer string
- *
- * \note Realization of GNU extension function
- *
- * Allocates enough memory on \p buf, then print to like sprintf()
+/** Print formatted string to buffer string
  *
  * \param [out] buf Buffer output buffer
  * \param [in] fmt Format string (printf-like)
  * \param [in] args List of arguments to \p fmt
  * \return Size of printed data, -1 if error occurs
+ *
+ * \note Realization of GNU extension function
+ *
+ * Allocates enough memory on \p buf, then print to like sprintf()
  */
 int vasprintf(char **buf, const char *fmt, va_list args)
 {
@@ -258,16 +254,16 @@ int vasprintf(char **buf, const char *fmt, va_list args)
 	return size;
 }
 
-/**
- * Check string to be color specifier like "#RRGGBB"
+/** Check string to be color specifier like "#RRGGBB"
+ *
+ * \param color String to check
+ * \return True if conditions met, false otherwise
  *
  * Conditions:
- * - String length is 7 by strlen()
+ * - String length is 7 by strlen() (8 with terminator)
  * - String starts with '#'
  * - Next 6 chars is hexadecimal digits by isxdigit()
  *
- * \param [in] color String to check
- * \return True if conditions met, false otherwise
  * \warning Segmentation fault if \p color is NULL
  */
 bool is_hex_color(const char *color)
@@ -283,16 +279,15 @@ bool is_hex_color(const char *color)
 	return true;
 }
 
-/**
- * Tokenize string by separator with escape characters
- *
- * First call sets string \p s to process,
- * then returns next token separated by \p sep.
+/** Tokenize string by separator with escape characters
  *
  * \param state New or current tokenization state
  * \param s String to tokenize, NULL to get next token
  * \param sep Token separator
- * \return Next token string; NULL if string processed or error occurs
+ * \return Next token string; NULL if string processed or error occured
+ *
+ * First call sets string \p s to process,
+ * then returns next token separated by \p sep.
  */
 char *tokenize_with_escape(struct tokenize_state *state, const char *s, char sep)
 {
