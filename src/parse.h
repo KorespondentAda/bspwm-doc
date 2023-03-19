@@ -1,12 +1,27 @@
 #ifndef BSPWM_PARSE_H
 #define BSPWM_PARSE_H
 
+/** \file
+ * String parsing tools
+ */
+
 #include "types.h"
 #include "subscribe.h"
 
+/** Command option prefix symbol */
 #define OPT_CHR  '-'
+/** Selector modifier prefix
+ * \see parse_monitor_modifiers() parse_desktop_modifiers() parse_node_modifiers()
+ */
 #define CAT_CHR  '.'
+/** KEY=VALUE pair separator
+ * \see parse_bool_declaration() cmd_node()
+ */
 #define EQL_TOK  "="
+/** "Column" value separator
+ * \see cmd_rule() remove_rule_by_cause()
+ * \todo Make char instead of char*? Used only as `COL_TOK[0]`
+ */
 #define COL_TOK  ":"
 
 bool parse_bool(char *value, bool *b);
