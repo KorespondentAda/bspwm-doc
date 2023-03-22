@@ -22,6 +22,10 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+/** \file
+ * \todo Describe functions
+ */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
@@ -849,6 +853,8 @@ node_t *brother_tree(node_t *n)
 	}
 }
 
+/** \todo Describe. What is #node_t::first_child?
+ */
 node_t *first_extrema(node_t *n)
 {
 	if (n == NULL) {

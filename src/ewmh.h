@@ -22,6 +22,12 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+/** \file
+ * EWMH communication logic
+ *
+ * Definitions in ewmh.c
+ */
+
 #ifndef BSPWM_EWMH_H
 #define BSPWM_EWMH_H
 

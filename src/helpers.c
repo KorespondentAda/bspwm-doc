@@ -22,7 +22,7 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** \file helpers.c
+/** \file
  * Number of useful functions
  */
 

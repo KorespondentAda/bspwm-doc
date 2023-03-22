@@ -22,6 +22,12 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+/** \file
+ * \todo Purpose?
+ * Definitions in pointer.c
+ * \todo Describe macros
+ */
+
 #ifndef BSPWM_POINTER_H
 #define BSPWM_POINTER_H
 

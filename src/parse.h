@@ -3,6 +3,8 @@
 
 /** \file
  * String parsing tools
+ *
+ * Definitions in parse.c
  */
 
 #include "types.h"

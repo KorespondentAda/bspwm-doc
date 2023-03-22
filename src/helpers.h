@@ -25,7 +25,7 @@
 #ifndef BSPWM_HELPERS_H
 #define BSPWM_HELPERS_H
 
-/** \file helpers.h
+/** \file
  * Useful helper functions and macros
  * \todo Add doxygen groups for macros
  */

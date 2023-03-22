@@ -22,6 +22,12 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+/** \file
+ * \todo Purpose?
+ *
+ * Definitions in events.c
+ */
+
 #ifndef BSPWM_EVENTS_H
 #define BSPWM_EVENTS_H
 
@@ -31,6 +37,7 @@
 #define ERROR_CODE_BAD_WINDOW  3
 
 extern uint8_t randr_base;
+/** \todo Describe */
 static const xcb_button_index_t BUTTONS[] = {XCB_BUTTON_INDEX_1, XCB_BUTTON_INDEX_2, XCB_BUTTON_INDEX_3};
 
 void handle_event(xcb_generic_event_t *evt);

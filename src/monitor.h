@@ -22,6 +22,12 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+/** \file
+ * \todo Purpose?
+ * Definitions in monitor.c
+ * \todo Describe macros (0/1)
+ */
+
 #ifndef BSPWM_MONITOR_H
 #define BSPWM_MONITOR_H
 

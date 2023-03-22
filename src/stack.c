@@ -58,7 +58,7 @@ stacking_list_t *make_stack(node_t *n)
  *
  * \param a Stack item to insert before
  * \param n Node to insert
- * \warn If \p a is NULL when stack already exists, it will be missed.
+ * \warning If \p a is NULL when stack already exists, it will be missed.
  */
 void stack_insert_after(stacking_list_t *a, node_t *n)
 {
@@ -91,7 +91,7 @@ void stack_insert_after(stacking_list_t *a, node_t *n)
  *
  * \param a Stack item to insert before
  * \param n Node to insert
- * \warn If \p a is NULL when stack already exists, it will be missed.
+ * \warning If \p a is NULL when stack already exists, it will be missed.
  */
 void stack_insert_before(stacking_list_t *a, node_t *n)
 {
@@ -167,7 +167,8 @@ void remove_stack_node(node_t *n)
 
 /** Client stack depth level
  *
- * Level is $3\cdot a + b$, where:
+ * \todo Add TeX math processor
+ * Level is $3\\cdot a + b$, where:
  * - $a$ is layer level {LAYER_BELOW, LAYER_NORMAL, LAYER_??}
  * - $b$ is state level {IS_TILED(c), IS_FLOATING(c), IS_??}
  *

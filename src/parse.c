@@ -345,6 +345,7 @@ bool parse_resize_handle(char *s, resize_handle_t *h)
  */
 bool parse_modifier_mask(char *s, uint16_t *m)
 {
+	/** \todo Use streq() ? */
 	if (strcmp(s, "shift") == 0) {
 		*m = XCB_MOD_MASK_SHIFT;
 		return true;
@@ -614,7 +615,7 @@ bool parse_id(char *s, uint32_t *id)
  * \param [in ] s String to parse
  * \param [out] key Parsed key
  * \param [out] value Parsed value
- * \param [out] state Current state action ???
+ * \param [out] state Current state action
  * \return True if parsed sucessfully, false otherwise
  * \todo man bspc(1)
  *

@@ -22,6 +22,11 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+/** \file
+ * \todo Describe functions (0/15)
+ * \todo Describe globals (0/1)
+ */
+
 #include <stdbool.h>
 #include "bspwm.h"
 #include "ewmh.h"

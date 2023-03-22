@@ -26,6 +26,7 @@
  * Main file of BSPC instance
  *
  * Command `bspc` used to send messages to running BSPWM instance
+ * \note See `man bspc(1)`
  */
 
 #include <stdio.h>
@@ -59,20 +60,17 @@ int main(int argc, char *argv[])
 		err("No arguments given.\n");
 	}
 
-	/**
-	 * Using UNIX socket for communication with BSPWM.
-	 * Socket path got from SOCKET_ENV_VAR.
-	 */
+	/** Using UNIX socket for communication with BSPWM. */
 	sock_address.sun_family = AF_UNIX;
 	char *sp;
 
+	/** Socket path got from SOCKET_ENV_VAR environment variable. */
 	sp = getenv(SOCKET_ENV_VAR);
 	if (sp != NULL) {
 		/** If present, save it as socket path; */
 		snprintf(sock_address.sun_path, sizeof(sock_address.sun_path), "%s", sp);
 	} else {
-		/**
-		 * Else, form socket path by [SOCKET_PATH_TPL](#SOCKET_PATH_TPL)
+		/** Else, generate socket path by #SOCKET_PATH_TPL
 		 * with data from xcb_parse_display() call, based on DISPLAY envvar.
 		 */
 		char *host = NULL;
@@ -83,7 +81,7 @@ int main(int argc, char *argv[])
 		free(host);
 	}
 
-	/** Option `--print-socket-path` — print gotten socket path and exit. */
+	/** Process option `--print-socket-path` — print gotten socket path and exit. */
 	if (streq(argv[1], "--print-socket-path")) {
 		printf("%s\n", sock_address.sun_path);
 		return EXIT_SUCCESS;
@@ -102,7 +100,7 @@ int main(int argc, char *argv[])
 	argc--, argv++;
 	int msg_len = 0;
 
-	/** Form message to send by \0-separated command line arguments */
+	/** Form message to send by \c '\\0'-separated command line arguments */
 	for (int offset = 0, rem = sizeof(msg), n = 0;
 			argc > 0 && rem > 0;
 			offset += n, rem -= n, argc--, argv++) {
@@ -117,8 +115,7 @@ int main(int argc, char *argv[])
 
 	int ret = EXIT_SUCCESS, nb;
 
-	/**
-	 * Prepare to poll():
+	/** Prepare to poll():
 	 * - From socket wait for POLLIN for response from BSPWM to print;
 	 * - From FIFO wait for POLLHUP to exit when stdout disconnected.
 	 */

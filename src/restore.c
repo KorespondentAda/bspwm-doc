@@ -22,6 +22,11 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+/** \file
+ * \todo Describe functions (0/15)
+ * \todo Describe macros
+ */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -46,6 +51,8 @@
  *
  * \param file_path Path to state file
  * \return Error presence
+ *
+ * \todo Describe
  */
 bool restore_state(const char *file_path)
 {

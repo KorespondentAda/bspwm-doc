@@ -22,8 +22,9 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** \file ewmh.c
+/** \file
  * EWMH communication logic
+ * \todo Describe functions (1/14)
  */
 
 #include <stdlib.h>

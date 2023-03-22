@@ -22,6 +22,11 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+/** \file
+ * \todo Purpose?
+ * Definitions in restore.c
+ */
+
 #ifndef BSPWM_RESTORE_H
 #define BSPWM_RESTORE_H
 

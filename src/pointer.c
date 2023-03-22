@@ -22,8 +22,9 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** \file pointer.c
+/** \file
  * \todo Describe. What for?
+ * \todo Describe functions (0/9)
  */
 
 #include <xcb/xcb_keysyms.h>
@@ -132,13 +133,16 @@ void ungrab_buttons(void)
 	}
 }
 
-/** Find keycode for keysym??
- *
- * Gets all keycodes for \p keysym and compares it with list of modifier keys
- * keycodes to find modifier of \p keysym.
+/** Find keycode for keysym
  *
  * \param keysym Keysym of potential modifier
- * \return Modfield — bitfield int that setted to modifier associated to \p keysym
+ * \return `modfield` — bitfield int that setted to modifier associated to \p keysym
+ *
+ * \todo What is modfield precisely?
+ *
+ * Gets all keycodes for \p keysym (from where?) and
+ * compares it with list of modifier keys keycodes to
+ * find modifier of \p keysym.
  */
 int16_t modfield_from_keysym(xcb_keysym_t keysym)
 {
@@ -147,6 +151,7 @@ int16_t modfield_from_keysym(xcb_keysym_t keysym)
 	xcb_get_modifier_mapping_reply_t *reply = NULL;
 	xcb_key_symbols_t *symbols = xcb_key_symbols_alloc(dpy);
 
+	/** \todo Describe conditions */
 	if ((keycodes = xcb_key_symbols_get_keycode(symbols, keysym)) == NULL ||
 	    (reply = xcb_get_modifier_mapping_reply(dpy, xcb_get_modifier_mapping(dpy), NULL)) == NULL ||
 	    reply->keycodes_per_modifier < 1 ||

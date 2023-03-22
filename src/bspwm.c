@@ -22,7 +22,7 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** \file bspwm.c
+/** \file
  * Main file of BSPWM instance
  * \todo Describe variables
  */
@@ -80,8 +80,8 @@ stacking_list_t *stack_head;           /*< */
 stacking_list_t *stack_tail;           /*< */
 subscriber_list_t *subscribe_head;     /**< Head of subscribers list \see subscribe.c */
 subscriber_list_t *subscribe_tail;     /**< Tail of subscribers list \see subscribe.c */
-pending_rule_t *pending_rule_head;     /*< */
-pending_rule_t *pending_rule_tail;     /*< */
+pending_rule_t *pending_rule_head;     /*< Head of pending rules list \see pending_rule_t */
+pending_rule_t *pending_rule_tail;     /*< Tail of pending rules list \see pending_rule_t */
 
 xcb_window_t meta_window;              /*< */
 motion_recorder_t motion_recorder;     /*< */
@@ -166,7 +166,7 @@ int main(int argc, char *argv[])
 		exit(EXIT_FAILURE);
 	}
 
-	/** Loading and setup startup settings (settings.c) */
+	/** Loading and setup startup settings */
 	load_settings();
 	setup();
 
@@ -212,7 +212,7 @@ int main(int argc, char *argv[])
 		if (bind(sock_fd, (struct sockaddr *) &sock_address, sizeof(sock_address)) == -1) {
 			err("Couldn't bind a name to the socket.\n");
 		}
-		/** - Start listeing for \ref SOMAXCONN connections. */
+		/** - Start listeing for SOMAXCONN connections. */
 		if (listen(sock_fd, SOMAXCONN) == -1) {
 			err("Couldn't listen to the socket.\n");
 		}
@@ -234,10 +234,10 @@ int main(int argc, char *argv[])
 	run_config(run_level);
 	running = true;
 
-	/** While \ref running is set, do working loop: */
+	/** While #running is set, do working loop: */
 	while (running) {
 
-		/** xcb_flush(dpy) */
+		/** Flush buffers to X server by xcb_flush() */
 		xcb_flush(dpy);
 
 		/** Prepare FDs for polling: socket, \ref dpy, pending rules list; */
@@ -276,6 +276,7 @@ int main(int argc, char *argv[])
 				cli_fd = accept(sock_fd, NULL, 0);
 				if (cli_fd > 0 && (n = recv(cli_fd, msg, sizeof(msg)-1, 0)) > 0) {
 					msg[n] = '\0';
+					/** Open response file descriptor for answers to client */
 					FILE *rsp = fdopen(cli_fd, "w");
 					if (rsp != NULL) {
 						handle_message(msg, n, rsp);
@@ -385,6 +386,7 @@ int main(int argc, char *argv[])
 
 /**
  * Initialize globals
+ * \todo Describe initial values
  */
 void init(void)
 {
@@ -404,7 +406,7 @@ void init(void)
 /**
  * Initial setup
  *
- * Gets X screen, creates \ref meta_window and \ref motion_recorder from root;
+ * Gets X screen, creates #meta_window and #motion_recorder from root;
  */
 void setup(void)
 {
@@ -412,7 +414,7 @@ void setup(void)
 	/** \todo Init functions purpose
 	 * Initializations:
 	 * - Global variables with init();
-	 * - ... with ewmh_init();
+	 * - EWMH atoms with ewmh_init();
 	 * - ... with pointer_init().
 	 */
 	init();
@@ -422,6 +424,7 @@ void setup(void)
 	/** Get default screen from connected X \todo xcb_setup_roots_iterator() */
 	screen = xcb_setup_roots_iterator(xcb_get_setup(dpy)).data;
 
+	/** Exit with error if xcb_setup_roots_iterator().data (#screen) is NULL */
 	if (screen == NULL) {
 		err("Can't acquire the default screen.\n");
 	}
@@ -506,6 +509,8 @@ void setup(void)
 			}
 		}
 
+		/** \todo Code duplication: make_monitor() - add_monitor() -
+		 * add_desktop() - make_desktop() identical sequence */
 		if (xinerama_is_active) {
 			xcb_xinerama_query_screens_reply_t *xsq = xcb_xinerama_query_screens_reply(dpy, xcb_xinerama_query_screens(dpy), NULL);
 			xcb_xinerama_screen_info_t *xsi = xcb_xinerama_query_screens_screen_info(xsq);

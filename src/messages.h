@@ -25,6 +25,11 @@
 #ifndef BSPWM_MESSAGES_H
 #define BSPWM_MESSAGES_H
 
+/** \file
+ * \todo Is there any need of declarations for all this functions?
+ * Only handle_message() used outside of messages.c
+ */
+
 #include "types.h"
 #include "subscribe.h"
 

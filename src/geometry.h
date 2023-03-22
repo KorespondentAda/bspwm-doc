@@ -22,6 +22,11 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+/** \file
+ * Geometry calculations
+ * Definitions in geometry.c
+ */
+
 #ifndef BSPWM_GEOMETRY_H
 #define BSPWM_GEOMETRY_H
 

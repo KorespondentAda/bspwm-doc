@@ -22,6 +22,11 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+/** \file
+ * \todo Purpose?
+ * Definitions in stack.c
+ */
+
 #ifndef BSPWM_STACK_H
 #define BSPWM_STACK_H
 
