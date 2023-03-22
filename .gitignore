@@ -4,3 +4,8 @@ bspc
 *.o
 tests/test_window
 Doxygen
+.cache
+.ccls-cache
+compile_commands.json
+cscope.out
+sess.vim
